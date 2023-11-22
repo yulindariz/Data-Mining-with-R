@@ -1,0 +1,34 @@
+#LANGKAH 1 :
+download package:
+library(devtools)
+library(twitteR)
+library(plyr)
+library(tm)
+library(wordcloud)
+library(RColorBrewer)
+library(ggplot2)
+
+
+#LANGKAH 2 :
+1. buka https://apps.twitter.com/app/new
+2. kolom nama, tulis nama (bebas);
+   kolom description, bebas apa aja, minimal 20 karakter kalo gak salah;
+   website, website profil fb atau twitter;
+   callback URL, isi http://127.0.0.1:1410
+   developer agreement, centang yes I agree.
+3. Create your Twitter application
+
+#LANGKAH 3 :
+1. buka file AsehatAqua
+2. jalanin programnya. yg library itu package yg didonlot. kalo package-nya blm
+ada, didonlot dulu.
+3. bagian consumer_key, consumer_secret, access_token, access_token_secret:
+   a. buka https://apps.twitter.com/app
+   b. pilih apps yg udah kamu buat
+   c. pilih keys and access tokens
+   d. nah disitu copas bagian consumer_key, dll nya
+   e. bagian setup_twitter_oauth kalo muncul option [1] atau [2], pilih 1
+   f. untuk searching kata ada di bagian:
+      sp <- searchTwitter('@sehatAQUA', n= 100)
+      'Air Aqua' itu kata yg dicar, n itu jumlahnya (lebih banyak lebih bagus)
+   g. running semua script-nya

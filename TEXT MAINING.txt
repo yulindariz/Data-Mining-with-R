@@ -1,0 +1,54 @@
+library(devtools)
+library(twitteR)
+library(plyr)
+library(tm)
+library(wordcloud)
+library(RColorBrewer)
+library(ggplot2)
+
+api_key = "9NTBwnJaswqYuE5DMgYayjkGd"
+api_secret = "OXQB3B9j4Bcv3uPz8gjVxyFEVnBkM8Cjxm7RQ1XETq7KwxWca5"
+access_token = "809347332567273473-Ngvut9xM1xzyDnoJKFPAEf7Qe9gurtb"
+access_token_secret = "2fGBtT6VB70q5dbueLctMbCDci2TvfIrm5OGNUdfsEDxN"
+setup_twitter_oauth(api_key, api_secret, access_token, access_token_secret)
+
+
+some_tweets = searchTwitter("@sehatAQUA", n=500)
+uas<-searchTwitter("@sehatAQUA",n=500,since="2010-03-031",until="2015-12-02")
+some_txt = sapply(some_tweets, function(x) x$getText())
+some_txt = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", some_txt)
+some_txt = gsub("@\\w+", "", some_txt)
+some_txt = gsub("[[:punct:]]", "", some_txt)
+some_txt = gsub("[[:digit:]]", "", some_txt)
+some_txt = gsub("http\\w+", "", some_txt)
+some_txt = gsub("[ \t]{2,}", "", some_txt)
+some_txt = gsub("^\\s+|\\s+$", "", some_txt)
+
+# define "tolower error handling" function 
+try.error = function(x)
+{
+  y = NA
+  try_error = tryCatch(tolower(x), error=function(e) e)
+  if (!inherits(try_error, "error"))
+    y = tolower(x)
+  return(y)
+}
+some_txt = sapply(some_txt, try.error)
+some_txt = some_txt[!is.na(some_txt)]
+names(some_txt) = NULL
+
+corpus = Corpus(VectorSource(some_txt))
+tdm = TermDocumentMatrix(corpus, control = list(stopwords = c("@sehatAQUA","nggak","nih","udah","belum","boleh","liat","kali","juga","yg", "air","pada","sama","gue","minum", "yang", "ada", "alasan", "beberapa", "termasuk", "dan","ini","punya","dengan","dalam","itu","dari","inilah","akan", stopwords("english"))))
+
+m = as.matrix(tdm)
+
+word_freqs = sort(rowSums(m), decreasing=TRUE) 
+dm = data.frame(word=names(word_freqs), freq=word_freqs)
+wordcloud(dm$word, dm$freq, random.order=FALSE, colors=brewer.pal(8, "Dark2"))
+png("MachineLearningCloud.png", width=12, height=8, units="in", res=300)
+wordcloud(dm$word, dm$freq, random.order=FALSE, colors=brewer.pal(8, "Dark2"))
+dev.off()
+
+termFrequency<- sort(rowSums(as.matrix(tdm)), decreasing=TRUE)
+termFrequency<- subset(termFrequency, termFrequency>=5)
+termFrequency
